@@ -1,12 +1,13 @@
 from fastapi import FastAPI, Path
-from .computation import fibonacci, ackermann, factorial
+from .computation import FibonacciSolver, ackermann, factorial
 
 app = FastAPI()
+fibonacci_solver = FibonacciSolver()
 
 
 @app.get('/fibonacci/{n}')
 def get_fibonacci(n: int = Path(..., ge=0)):
-    return {'result': fibonacci(n)}
+    return {'result': fibonacci_solver.solve(n)}
 
 @app.get('/ackermann/{m}/{n}')
 def get_ackermann(m: int, n: int):

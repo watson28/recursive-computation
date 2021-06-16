@@ -6,11 +6,11 @@ class FibonacciSolver:
         if n == 0:
             return 0
         matrix = self._create_initial_fibonacci_matrix()
-        self.pow_fibonacci_matrix(matrix, n -1)
+        self._pow_fibonacci_matrix(matrix, n -1)
 
         return matrix[0][0]
 
-    def pow_fibonacci_matrix(self, matrix, n):
+    def _pow_fibonacci_matrix(self, matrix, n):
         """Compute the power of a fibonacci matrix (2x2) in place"""
         decompositions = []
         while True:

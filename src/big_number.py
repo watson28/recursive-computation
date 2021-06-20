@@ -1,4 +1,5 @@
 from typing import Generator
+import math
 
 def big_multiply(rev_a: str, rev_b: str, chunk_size = 1) -> Generator[str, None, None]:
     """
@@ -7,8 +8,8 @@ def big_multiply(rev_a: str, rev_b: str, chunk_size = 1) -> Generator[str, None,
     The result is partially retuned in a generator in reverse order,
     starting with the less significant digits till the most significant ones.
     """
-    m = (len(rev_a) // chunk_size)
-    n = (len(rev_b) // chunk_size)
+    m = math.ceil(len(rev_a) / chunk_size)
+    n = math.ceil(len(rev_b) / chunk_size)
     carry = 0
     for col in range(m + n -1):
         a_max = min(col, m-1)

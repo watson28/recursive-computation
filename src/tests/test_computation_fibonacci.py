@@ -1,7 +1,7 @@
 import json
 import os
 from unittest import TestCase 
-import pytest
+import pytest # type: ignore
 from src.computation import FibonacciSolver
 
 test_cases_file_path =os.path.join(os.path.dirname(__file__), './fibonacci_test_cases.json')

@@ -1,3 +1,10 @@
+from collections import deque
+from .big_number import big_pow
+from .timer import Timer
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
 class FibonacciSolver:
     def __init__(self) -> None:
         pass
@@ -47,7 +54,37 @@ class FibonacciSolver:
         return [[1,1], [1,0]]
 
 def ackermann(m: int, n: int) -> int:
-    return 0
+    return ConwayChainedArrowNumber(2, n + 3, m - 2).evaluate() - 3
+
+class ConwayChainedArrowNumber:
+    """ Represents numbers using 3-length Conway chained arrow notation p -> q -> r """
+    def __init__(self, p, q, r) -> None:
+        self.p = p
+        self.q = q
+        self.r = r
+        self._iterations = 0
+
+    def evaluate(self) -> int:
+        self._iterations = 0
+        result = self._evaluate(self.p, self.q, self.r)
+        print('iterations ' + str(self._iterations))
+        return result
+
+    def _evaluate(self, p: int, q: int = 1, r: int = 1) -> int:
+        if q == 1 or r == 1:
+            self._iterations += 1
+            return big_pow(p, q, 1000)
+        if p == 2 and q == 2:
+            return 4
+        return self._evaluate(p, self._evaluate(p, q-1, r), r-1)
+
+
+
 
 def factorial(n: int) -> int:
     return 0
+
+
+if __name__ == '__main__':
+    with Timer('Ackerman(4, 2)'):
+        print(ackermann(4, 3))

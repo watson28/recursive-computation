@@ -1,52 +1,50 @@
-import pytest
-from src.big_number import big_multiply
-from ..big_number import big_multiply, _get_subnum
+import pytest # type: ignore
+from unittest import TestCase 
+from src.big_number import big_multiply, big_pow, _get_number_chunk
 
 def test_big_multiply_with_same_length_numbers():
     a = 2345
     b = 7891
-    rev_a = str(a)[::-1]
-    rev_b = str(b)[::-1]
-    expected_result = str(a*b)[::-1]
-    assert ''.join(big_multiply(rev_a, rev_b)) == expected_result
-    assert ''.join(big_multiply(rev_a, rev_b, 2)) == expected_result
-    assert ''.join(big_multiply(rev_a, rev_b, 3)) == expected_result
+    expected_result = str(a*b)
+    assert big_multiply(str(a), str(b)) == expected_result
+    assert big_multiply(str(a), str(b), 2) == expected_result
+    assert big_multiply(str(a), str(b), 3) == expected_result
 
 def test_big_multiplify_with_with_different_length_numbers():
     a = 2345
     b = 789
-    rev_a = str(a)[::-1]
-    rev_b = str(b)[::-1]
-    expected_result = str(a*b)[::-1]
+    expected_result = str(a*b)
 
-    assert ''.join(big_multiply(rev_a, rev_b)) == expected_result
-    assert ''.join(big_multiply(rev_b, rev_a)) == expected_result
+    assert big_multiply(str(a), str(b)) == expected_result
+    assert big_multiply(str(a), str(b)) == expected_result
 
 def test_big_multiply_commutative_property():
     a = 2345
     b = 789
-    rev_a = str(a)[::-1]
-    rev_b = str(b)[::-1]
 
-    assert ''.join(big_multiply(rev_a, rev_b)) == ''.join(big_multiply(rev_b, rev_a))
+    assert big_multiply(str(a), str(b)) == big_multiply(str(b), str(a))
 
 def test_big_multiply_produce_same_result_regardless_chunk_size():
     a = 5345834976
     b = 3458439
-    rev_a = str(a)[::-1]
-    rev_b = str(b)[::-1]
-    expected_result = str(a*b)[::-1]
+    expected_result = str(a*b)
 
     for chunk_size in range(1, len(str(a)) + 1):
-        assert ''.join(big_multiply(rev_a, rev_b, chunk_size)) == expected_result
+        assert big_multiply(str(a), str(b), chunk_size) == expected_result
 
 
-def test_get_subnum_returns_single_digits():
-    assert _get_subnum('54321', 1, 0) == 5
+def test_get_number_chunk_returns_single_digits():
+    assert _get_number_chunk('54321', 1, 0) == 5
 
 
-def test_get_subnum_returns_two_digits():
-    assert _get_subnum('54321', 2, 0) == 45
+def test_get_number_chunk_returns_two_digits():
+    assert _get_number_chunk('54321', 2, 0) == 5
 
 def test_get_subnum_returns_right_number_from_chunks():
-    assert _get_subnum('5432109876', 2, 3) == 89
+    assert _get_number_chunk('5432109876', 2, 3) == 98
+
+class TestBigPow(TestCase):
+    def test_power_of_number(self):
+        base = 2345
+        power = 7891
+        assert big_pow(base, power, 10) == base**power

@@ -9,12 +9,14 @@ python = "^3.9"
 fastapi = "^0.65.2"
 uvicorn = "^0.14.0"
 requests = "^2.25.1"
+redis = "^3.5.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 mypy = "^0.902"
 flake8 = "^3.9.2"
 types-requests = "^0.1.11"
+types-redis = "^3.5.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

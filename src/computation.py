@@ -1,4 +1,4 @@
-from collections import deque
+from src.cache import Cache
 from .big_number import big_pow
 from .timer import Timer
 import logging
@@ -78,11 +78,29 @@ class ConwayChainedArrowNumber:
             return 4
         return self._evaluate(p, self._evaluate(p, q-1, r), r-1)
 
+class FactorialSolver:
+    MAX_FACTORIAL_KEY = 'max_factorial'
+    _cache: Cache
+    
+    def __init__(self, cache: Cache) -> None:
+        self._cache = cache
+        if self._cache.get_value(self.MAX_FACTORIAL_KEY) is None:
+            self._cache.set_value('0', 1)
+            self._cache.set_value(self.MAX_FACTORIAL_KEY, 0)
 
+    def solve(self, n: int) -> int:
+        max_computed_factorial = self._cache.get_value_or_fail(self.MAX_FACTORIAL_KEY)
+        if n < max_computed_factorial:
+            return self._cache.get_value_or_fail(str(n))
 
+        result = self._cache.get_value_or_fail(str(max_computed_factorial))
+        for i in range(max_computed_factorial + 1, n + 1):
+            result = result*i
+            print(str(i))
+            self._cache.set_value(str(i), result)
 
-def factorial(n: int) -> int:
-    return 0
+        self._cache.set_value(self.MAX_FACTORIAL_KEY, n)
+        return result
 
 
 if __name__ == '__main__':

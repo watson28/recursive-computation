@@ -3,39 +3,78 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 from requests import Response
 from src.server import app
-from src.computation import FibonacciSolver
+from src.computation import FactorialSolver, FibonacciSolver
+from src.cache import RedisCache
 
 
-@patch.object(FibonacciSolver, 'solve')
+@patch('src.server.FactorialSolver', autospec=True)
+@patch('src.server.RedisCache', autospec=True)
+@patch('src.server.FibonacciSolver', autospec=True)
 class TestFibonacciService(TestCase):
-    client: TestClient
+    def test_requires_number(self, *args):
+        with TestClient(app) as client:
+            response = self._call_fibonacci_service(client, '')
+            assert response.status_code == 404
 
-    @classmethod
-    def setUpClass(cls):
-        cls.client = TestClient(app)
+    def test_requires_positive_number(self, *args):
+        with TestClient(app) as client:
+            response = self._call_fibonacci_service(client, str(-10))
+            assert response.status_code == 422
 
-    def test_requires_number(self, mock_fibonacci_solve: MagicMock):
-        response = self._call_fibonacci_service('')
-        assert response.status_code == 404
+    def test_accept_zero_number(self, *args):
+        with TestClient(app) as client:
+            response = self._call_fibonacci_service(client, str(0))
+            assert response.status_code == 200
 
-    def test_requires_positive_number(self, mock_fibonacci_solve: MagicMock):
-        response = self._call_fibonacci_service(str(-10))
-        assert response.status_code == 422
-
-    def test_accept_zero_number(self, mock_fibonacci_solve: MagicMock):
-        response = self._call_fibonacci_service(str(0))
-        assert response.status_code == 200
-
-    def test_call_computation_fibonacci_with_parameter(self, mock_fibonacci_solve: MagicMock):
+    def test_call_computation_fibonacci_with_parameter(self, fibonacci_solver: MagicMock, *args):
         n = 10
-        self._call_fibonacci_service(str(n))
-        mock_fibonacci_solve.assert_called_with(n)
+        with TestClient(app) as client:
+            fibonacci_solver.return_value.solve.return_value = 1
+            self._call_fibonacci_service(client, str(n))
+            fibonacci_solver.return_value.solve.assert_called_with(n)
 
-    def test_returns_result_computation_fibonacci(self, mock_fibonacci_solve: MagicMock):
+    def test_returns_result_computation_fibonacci(self, fibonacci_solver: MagicMock, *args):
         result = 11
-        mock_fibonacci_solve.return_value = result
-        response = self._call_fibonacci_service('6')
-        assert response.json()['result'] == result
+        with TestClient(app) as client:
+            fibonacci_solver.return_value.solve.return_value = result
+            response = self._call_fibonacci_service(client, '6')
+            assert response.json()['result'] == result
 
-    def _call_fibonacci_service(self, n: str) -> Response:
-        return self.client.get(f'/fibonacci/{n}')
+    def _call_fibonacci_service(self, client, n: str) -> Response:
+        return client.get(f'/fibonacci/{n}')
+
+
+@patch('src.server.FibonacciSolver', autospec=True)
+@patch('src.server.RedisCache', autospec=True)
+@patch('src.server.FactorialSolver', autospec=True)
+class TestFactorialService(TestCase):
+    def test_requires_number(self, *args):
+        with TestClient(app) as client:
+            response = self._call_factorial_service(client, '')
+            assert response.status_code == 404
+
+    def test_requires_positive_number(self, *args):
+        with TestClient(app) as client:
+            response = self._call_factorial_service(client, str(-10))
+            assert response.status_code == 422
+
+    def test_accept_zero_number(self, *args):
+        with TestClient(app) as client:
+            response = self._call_factorial_service(client, str(0))
+            assert response.status_code == 200
+
+    def test_call_computation_factorial_with_parameter(self, factorial_solver: MagicMock, *args):
+        n = 10
+        with TestClient(app) as client:
+            self._call_factorial_service(client, str(n))
+            factorial_solver.return_value.solve.assert_called_with(n)
+
+    def test_returns_result_computation_factorial(self, factorial_solver: MagicMock, *args):
+        result = 11
+        with TestClient(app) as client:
+            factorial_solver.return_value.solve.return_value = result
+            response = self._call_factorial_service(client, '6')
+            assert response.json()['result'] == result
+
+    def _call_factorial_service(self, client: TestClient, n: str) -> Response:
+        return client.get(f'/factorial/{n}')

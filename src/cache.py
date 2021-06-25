@@ -2,8 +2,10 @@ from abc import ABC, abstractclassmethod
 from typing import Union
 import redis
 
+
 class NotFoundCachedValueException(Exception):
     pass
+
 
 class Cache(ABC):
     @abstractclassmethod
@@ -30,7 +32,7 @@ class RedisCache(Cache):
         self._cache = redis.Redis()
 
     def get_value(self, key: str) -> Union[int, None]:
-        value =  self._cache.get(key)
+        value = self._cache.get(key)
         return int(value.decode()) if value is not None else None
 
     def set_value(self, key: str, value: int) -> None:

@@ -1,10 +1,8 @@
 from fastapi.testclient import TestClient
-from unittest import TestCase 
+from unittest import TestCase
 from unittest.mock import MagicMock, patch
 from requests import Response
 from src.server import app
-from src.computation import FactorialSolver, FibonacciSolver
-from src.cache import RedisCache
 
 
 @patch('src.server.FactorialSolver', autospec=True)

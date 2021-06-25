@@ -1,6 +1,7 @@
 import math
 
-def big_multiply(a: str, b: str, chunk_size = 1) -> str:
+
+def big_multiply(a: str, b: str, chunk_size=1) -> str:
     m = math.ceil(len(a) / chunk_size)
     n = math.ceil(len(b) / chunk_size)
     result = ""
@@ -8,7 +9,7 @@ def big_multiply(a: str, b: str, chunk_size = 1) -> str:
     a_max = m - 1
     a_min = m
     b_min = n
-    for col in range(m + n -1):
+    for col in range(m + n - 1):
         a_max -= (1 if col >= n else 0)
         a_min = max(a_min - 1, 0)
         b_min = max(b_min - 1, 0)
@@ -16,7 +17,7 @@ def big_multiply(a: str, b: str, chunk_size = 1) -> str:
         col_total = 0
         for i in range(col_size):
             col_total += (
-                + _get_number_chunk(a, chunk_size, a_min + i)*_get_number_chunk(b, chunk_size, b_min + col_size - i - 1)
+                + _get_number_chunk(a, chunk_size, a_min + i) * _get_number_chunk(b, chunk_size, b_min + col_size - i - 1)
             )
         col_total_str = str(col_total + carry)
         is_last_col = (col == (m + n - 2))
@@ -31,13 +32,14 @@ def big_multiply(a: str, b: str, chunk_size = 1) -> str:
 
 def _get_number_chunk(number: str, chunk_size: int, chunk_index: int) -> int:
     total_chunk = math.ceil(len(number) / chunk_size)
-    end = len(number) - (total_chunk - 1 - chunk_index)*chunk_size
+    end = len(number) - (total_chunk - 1 - chunk_index) * chunk_size
 
     return int(
         number[max(end - chunk_size, 0): end]
     )
 
-def big_pow(base: int, power: int, chunk_size = 1) -> int:
+
+def big_pow(base: int, power: int, chunk_size=1) -> int:
     decompositions = []
     exp = power
     while True:

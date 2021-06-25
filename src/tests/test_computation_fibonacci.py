@@ -1,11 +1,11 @@
 import json
 import os
-from unittest import TestCase 
-import pytest # type: ignore
+import pytest  # type: ignore
 from src.computation import FibonacciSolver
 
-test_cases_file_path =os.path.join(os.path.dirname(__file__), './fibonacci_test_cases.json')
+test_cases_file_path = os.path.join(os.path.dirname(__file__), './fibonacci_test_cases.json')
 fibonacci_test_cases = json.load(open(test_cases_file_path))
+
 
 @pytest.mark.parametrize(
     'n,result',

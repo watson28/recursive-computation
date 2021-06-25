@@ -96,13 +96,7 @@ class FactorialSolver:
         result = self._cache.get_value_or_fail(str(max_computed_factorial))
         for i in range(max_computed_factorial + 1, n + 1):
             result = result*i
-            print(str(i))
             self._cache.set_value(str(i), result)
 
         self._cache.set_value(self.MAX_FACTORIAL_KEY, n)
         return result
-
-
-if __name__ == '__main__':
-    with Timer('Ackerman(4, 2)'):
-        print(ackermann(4, 3))

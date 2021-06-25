@@ -49,10 +49,8 @@ def big_pow(base: int, power: int, chunk_size = 1) -> int:
     base_str = str(base)
     result_str = base_str
 
-    print(f'pow function, total iterations: {len(decompositions)}')
     i = 0
     for exp in reversed(decompositions):
-        print(f'pow function, iteraction {i}, ')
         i += 1
         result_str = big_multiply(result_str, result_str, chunk_size)
         if exp % 2 != 0:

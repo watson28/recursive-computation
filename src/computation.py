@@ -88,13 +88,10 @@ class FactorialSolver:
 
     def __init__(self, cache: Cache) -> None:
         self._cache = cache
-        if self._cache.get_value(self.MAX_FACTORIAL_KEY) is None:
-            self._cache.set_value('0', 1)
-            self._cache.set_value(self.MAX_FACTORIAL_KEY, 0)
 
     def solve(self, n: int) -> int:
-        max_computed_factorial = self._cache.get_value_or_fail(self.MAX_FACTORIAL_KEY)
-        if n < max_computed_factorial:
+        max_computed_factorial = self._get_max_computed_factorial()
+        if n <= max_computed_factorial:
             return self._cache.get_value_or_fail(str(n))
 
         result = self._cache.get_value_or_fail(str(max_computed_factorial))
@@ -104,3 +101,12 @@ class FactorialSolver:
 
         self._cache.set_value(self.MAX_FACTORIAL_KEY, n)
         return result
+
+    def _get_max_computed_factorial(self):
+        max_factorial_n = self._cache.get_value(self.MAX_FACTORIAL_KEY)
+        if max_factorial_n is None:
+            self._cache.set_value(self.MAX_FACTORIAL_KEY, 0)
+            self._cache.set_value('0', 1)
+            return 0
+
+        return max_factorial_n

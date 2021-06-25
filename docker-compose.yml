@@ -6,3 +6,16 @@ services:
       - ./.data/redis:/data
     ports:
       - 6379:6379
+
+  web_service:
+    build: .
+    command: uvicorn src.server:app --host 0.0.0.0 --port 8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379

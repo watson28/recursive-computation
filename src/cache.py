@@ -1,3 +1,4 @@
+import os
 from abc import ABC, abstractclassmethod
 from typing import Union
 import redis
@@ -29,7 +30,9 @@ class RedisCache(Cache):
 
     def __init__(self) -> None:
         super().__init__()
-        self._cache = redis.Redis()
+        self._cache = redis.Redis(
+            host=os.environ.get('REDIS_HOST', 'localhost')
+        )
 
     def get_value(self, key: str) -> Union[int, None]:
         value = self._cache.get(key)

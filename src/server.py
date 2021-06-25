@@ -16,7 +16,7 @@ async def app_init():
 
 
 @app.get('/fibonacci/{n}')
-def get_fibonacci(n: int = Path(..., ge=0)):
+def get_fibonacci(n: int):
     global fibonacci_solver
     return {'result': fibonacci_solver.solve(n)}
 

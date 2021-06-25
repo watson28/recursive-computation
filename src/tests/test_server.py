@@ -14,11 +14,6 @@ class TestFibonacciService(TestCase):
             response = self._call_fibonacci_service(client, '')
             assert response.status_code == 404
 
-    def test_requires_positive_number(self, *args):
-        with TestClient(app) as client:
-            response = self._call_fibonacci_service(client, str(-10))
-            assert response.status_code == 422
-
     def test_accept_zero_number(self, *args):
         with TestClient(app) as client:
             response = self._call_fibonacci_service(client, str(0))

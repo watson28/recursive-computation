@@ -13,9 +13,9 @@ class FibonacciSolver:
         if n == 0:
             return 0
         matrix = self._create_initial_fibonacci_matrix()
-        self._pow_fibonacci_matrix(matrix, n - 1)
+        self._pow_fibonacci_matrix(matrix, abs(n) - 1)
 
-        return matrix[0][0]
+        return matrix[0][0] if n >= 0 else matrix[0][0] * (1 if n % 2 == 1 else -1)
 
     def _pow_fibonacci_matrix(self, matrix, n):
         """Compute the power of a fibonacci matrix (2x2) in place"""

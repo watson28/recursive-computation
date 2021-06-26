@@ -28,10 +28,11 @@ class Cache(ABC):
 class RedisCache(Cache):
     _cache: redis.Redis
 
-    def __init__(self) -> None:
+    def __init__(self, db_index: int) -> None:
         super().__init__()
         self._cache = redis.Redis(
-            host=os.environ.get('REDIS_HOST', 'localhost')
+            host=os.environ.get('REDIS_HOST', 'localhost'),
+            db=db_index
         )
 
     def get_value(self, key: str) -> Union[int, None]:

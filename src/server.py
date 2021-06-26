@@ -11,8 +11,8 @@ factorial_solver: FactorialSolver
 async def app_init():
     global fibonacci_solver
     global factorial_solver
-    fibonacci_solver = FibonacciSolver()
-    factorial_solver = FactorialSolver(RedisCache())
+    fibonacci_solver = FibonacciSolver(RedisCache(db_index=0))
+    factorial_solver = FactorialSolver(RedisCache(db_index=1))
 
 
 @app.get('/fibonacci/{n}')

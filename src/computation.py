@@ -1,3 +1,4 @@
+from typing import List
 from src.cache import Cache
 from .big_number import big_pow
 import logging
@@ -6,18 +7,29 @@ logging.basicConfig(level=logging.INFO)
 
 
 class FibonacciSolver:
-    def __init__(self) -> None:
-        pass
+    _cache: Cache
+
+    def __init__(self, cache: Cache) -> None:
+        self._cache = cache
 
     def solve(self, n: int) -> int:
+        positive_fibonacci = self._solve_positive(abs(n))
+        return positive_fibonacci if n >= 0 else positive_fibonacci * (1 if n % 2 == 1 else -1)
+
+    def _solve_positive(self, n: int) -> int:
         if n == 0:
             return 0
+
+        cached_value = self._cache.get_value(str(n))
+        if cached_value is not None:
+            return cached_value
+
         matrix = self._create_initial_fibonacci_matrix()
-        self._pow_fibonacci_matrix(matrix, abs(n) - 1)
+        self._pow_fibonacci_matrix(matrix, n - 1)
 
-        return matrix[0][0] if n >= 0 else matrix[0][0] * (1 if n % 2 == 1 else -1)
+        return matrix[0][0]
 
-    def _pow_fibonacci_matrix(self, matrix, n):
+    def _pow_fibonacci_matrix(self, matrix: List[List[int]], n: int):
         """Compute the power of a fibonacci matrix (2x2) in place"""
         decompositions = []
         while True:
@@ -27,12 +39,17 @@ class FibonacciSolver:
             n = n // 2
 
         initial_matrix = self._create_initial_fibonacci_matrix()
+
+        # iterated in reversed order so we can cache the fibonacci number
+        # of each decomposition.
         for exp in reversed(decompositions):
             self._multiply_fibonacci_matrix(matrix, matrix)
             if exp % 2 != 0:
                 self._multiply_fibonacci_matrix(matrix, initial_matrix)
 
-            # print(exp+1, matrix[0][0])
+            self._cache.set_value(str(exp + 1), matrix[0][0])
+            self._cache.set_value(str(exp), matrix[0][1])
+            self._cache.set_value(str(exp - 1), matrix[1][1])
 
     def _multiply_fibonacci_matrix(self, F, M):
         """Compute the product of two fibonacci matrix (2x2) in place by storing result in first matrix param"""

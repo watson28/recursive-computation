@@ -5,6 +5,7 @@ from requests import Response
 from src.server import app
 
 
+@patch('src.server.Monitoring', autospec=True)
 @patch('src.server.FactorialSolver', autospec=True)
 @patch('src.server.RedisCache', autospec=True)
 @patch('src.server.FibonacciSolver', autospec=True)
@@ -37,6 +38,7 @@ class TestFibonacciService(TestCase):
         return client.get(f'/fibonacci/{n}')
 
 
+@patch('src.server.Monitoring', autospec=True)
 @patch('src.server.FibonacciSolver', autospec=True)
 @patch('src.server.RedisCache', autospec=True)
 @patch('src.server.FactorialSolver', autospec=True)

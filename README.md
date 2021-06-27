@@ -1,6 +1,6 @@
 # Recursive computation service
 
-web service which calculates and displays results for fibonacci, ackermann and factorial functions.
+web service which calculates and displays results for Fibonacci, Ackermann, and Factorial functions.
 
 ## Getting started
 
@@ -46,7 +46,7 @@ Given `n` be a number and `F(n)` the nth fibonacci number, then it uses the foll
 
 The problem is then translated to compute the nth power of a 2x2 matrix. To compute it, it uses [exponentiation by squaring](https://simple.wikipedia.org/wiki/Exponentiation_by_squaring).
 
-In the process of computing the final result, it caches the values of the intermidate fibonacci numbers that are generated in each iteration of the exponetiation by squaring:
+In the process of computing the final result, it caches the values of the intermediate Fibonacci numbers that are generated in each iteration of the exponentiation by squaring:
 
 ```
 Power(A, n)   = Power(A, n/2)^2    -> cache value for F(n) ...
@@ -55,17 +55,17 @@ Power(A, n/4) = Power(A, n/8)^2    -> cache value F(n/4) = result[0][1], F(n/4 +
 ...
 ```
 
-For computing the fibonacci of a negative number, it uses the identity:
+For computing the Fibonacci of a negative number, it uses the identity:
 ```
 F(-n) = (-1)^n * F(n)
 ```
 
-which allow to it compute from the result of its positive version. This allow us to reduce the data in cache since it just compute/cache fibonacci of positive numbers.
+which allows to compute it from the result of its positive version. This allow to reduce the data in cache since it just computes/caches Fibonacci of positive numbers.
 
 
 ### Ackermann function
 
-It solve it using the the following definition
+It solves it using the following definition
 
 ```
 Ackermann(m, n) = | n + 1, when m = 0
@@ -80,11 +80,11 @@ Then for m >=2, the problem is equivalent to expand a 3 length chained arrow num
 
 ### Factorial function
 
-It uses the standard recursive defition of the factorial function.
+It uses the standard recursive definition of the factorial function.
 
 n! = n*(n-1)!
 
-However it relies on the cached result of the previous operations to reduce the number of multiplications to perform. It achieve this by keeping a sorted set of previous cached factorials and then finding the max cached factorial that is lower than n (n's floor). Thus:
+However, it relies on the cached result of the previous operations to reduce the number of multiplications to perform. It achieves this by keeping a sorted set of previously cached factorials and then finding the max cached factorial that is lower than n (n's floor). Thus:
 
 
 ```
@@ -97,9 +97,9 @@ which will perform `(n - max_copmuted_n)` multiplications in the second case.
 
 ## Monitoring
 
-The web service has a middleware that register in an append log file the response time of all success requests. the file is located in `<project-root>/.data/monitoring.log`
+The web service has a middleware that registers in an append log file the response time of all success requests. the file is located in `<project-root>/.data/monitoring.log`
 
 
 ## Future improvements
 
-- The ackermann function produces huge numbers with small inputs, for instance, m = 4, n = 3. Computing arithmetic operations in huge numbers increases dramatically the memory consumption even to a point where the whole machine's memory is not enough to finish the operation. It might be possible to achieve a constant memory comsumption when computing ackermann by performing the multiplication operation in smaller chunks(see big_number.py module)  and reading/saving the numbers in disk. 
+- The Ackermann function produces huge numbers with small inputs, for instance, m = 4, n = 3. Computing arithmetic operations in huge numbers increases dramatically the memory consumption even to a point where the whole machine's memory is not enough to finish the operation. It might be possible to achieve a constant memory consumption when computing Ackermann by performing the multiplication operation in smaller chunks(see big_number.py module)  and reading/saving the numbers in the disk. 

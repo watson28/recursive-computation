@@ -41,4 +41,3 @@ class RedisCache(Cache):
 
     def set_value(self, key: str, value: int) -> None:
         self._cache.set(key, value)
-        return super().set_value(key, value)

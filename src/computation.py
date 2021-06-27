@@ -130,30 +130,23 @@ class AckermannSolver:
 
 
 class FactorialSolver:
-    MAX_FACTORIAL_KEY = 'max_factorial'
+    CACHED_VALUES_KEY = 'cached_values'
     _cache: Cache
 
     def __init__(self, cache: Cache) -> None:
         self._cache = cache
 
     def solve(self, n: int) -> int:
-        max_computed_factorial = self._get_max_computed_factorial()
-        if n <= max_computed_factorial:
-            return self._cache.get_value_or_fail(str(n))
+        sorted_cached_values = self._cache.get_set_value(self.CACHED_VALUES_KEY, 0, n)
+        n_floor = sorted_cached_values[-1] if len(sorted_cached_values) > 0 else 0
+        n_floor_result = self._cache.get_value_or_fail(str(n_floor)) if n_floor > 0 else 1
 
-        result = self._cache.get_value_or_fail(str(max_computed_factorial))
-        for i in range(max_computed_factorial + 1, n + 1):
+        result = 1
+        for i in range(n_floor + 1, n + 1):
             result = result * i
-            self._cache.set_value(str(i), result)
 
-        self._cache.set_value(self.MAX_FACTORIAL_KEY, n)
+        result = result * n_floor_result
+
+        self._cache.set_value(str(n), result)
+        self._cache.add_to_set_value(self.CACHED_VALUES_KEY, n)
         return result
-
-    def _get_max_computed_factorial(self):
-        max_factorial_n = self._cache.get_value(self.MAX_FACTORIAL_KEY)
-        if max_factorial_n is None:
-            self._cache.set_value(self.MAX_FACTORIAL_KEY, 0)
-            self._cache.set_value('0', 1)
-            return 0
-
-        return max_factorial_n

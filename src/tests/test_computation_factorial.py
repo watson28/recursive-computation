@@ -1,7 +1,6 @@
-from typing import Union
 import pytest  # type: ignore
 from src.computation import FactorialSolver
-from unittest.mock import create_autospec
+from unittest.mock import MagicMock, create_autospec
 from src.cache import Cache
 
 factorial_test_cases = [
@@ -41,70 +40,43 @@ def test_factorial_solver_return_correct_value(n, result):
     assert(solver.solve(n)) == result
 
 
-def test_factorial_init_cache_max_factorial():
+def test_factorial_cache_value_of_computed_factorial():
+    n = 10
     cache_instance = _create_mock_cache_instance()
 
-    FactorialSolver(cache_instance).solve(10)
+    result = FactorialSolver(cache_instance).solve(n)
 
-    cache_instance.set_value.assert_any_call(FactorialSolver.MAX_FACTORIAL_KEY, 10)
-
-
-def test_factorial_doesnt_cache_max_factorial_whe_exist():
-    cache_instance = _create_mock_cache_instance(max_factorial=10, max_factorial_result=3628800)
-
-    FactorialSolver(cache_instance).solve(10)
-
-    assert not cache_instance.set_value.called
+    cache_instance.add_to_set_value.assert_called_with(FactorialSolver.CACHED_VALUES_KEY, n)
+    cache_instance.set_value.assert_called_with(str(n), result)
 
 
-def test_factorial_return_result_from_cache_when_exist():
+def test_factorial_use_cached_value_when_exist():
     n = 10
-    cached_result = 999
-    cache_instance = _create_mock_cache_instance(11, 39916800, {str(n): cached_result})
+    cached_values = {'10': 999, '9': 888, '8': 777}
+    cache_instance = _create_mock_cache_instance(cached_values)
 
-    solver = FactorialSolver(cache_instance)
+    result = FactorialSolver(cache_instance).solve(n)
 
-    assert solver.solve(n) == cached_result
-
-
-def test_factorial_cache_value_between_n_and_max_computed_factorial():
-    n = 10
-    max_cached_n = 5
-    result_max_cached_n = 120
-    cache_instance = _create_mock_cache_instance(max_cached_n, result_max_cached_n)
-
-    solver = FactorialSolver(cache_instance)
-    solver.solve(n)
-
-    # +1 because the final cache update for MAX_FACTORIAL_KEY
-    assert cache_instance.set_value.call_count == (n - max_cached_n + 1)
-    for index, m in enumerate(range(max_cached_n + 1, n + 1)):
-        assert cache_instance.set_value.mock_calls[index].args[0] == str(m)
+    assert result == cached_values[str(n)]
 
 
-def test_factorial_cache_value_max_factorial():
-    n = 10
-    max_cached_n = 5
-    result_max_cached_n = 120
-    cache_instance = _create_mock_cache_instance(max_cached_n, result_max_cached_n)
+def test_factorial_returns_correct_value_when_exist_cached_value_lower_than_n():
+    cached_values = {'10': 999, '9': 888, '8': 777}
+    cache_instance = _create_mock_cache_instance(cached_values)
 
-    solver = FactorialSolver(cache_instance)
-    solver.solve(n)
+    result = FactorialSolver(cache_instance).solve(11)
 
-    cache_instance.set_value.assert_called_with(FactorialSolver.MAX_FACTORIAL_KEY, n)
+    assert result == 11 * cached_values['10']
 
 
-def _create_mock_cache_instance(max_factorial: Union[int, None] = 0, max_factorial_result: Union[int, None] = 1, values: dict = {}):
+def _create_mock_cache_instance(values: dict = {}) -> MagicMock:
     MockCache = create_autospec(Cache)
 
     def mock_get_value(key):
-        if key == FactorialSolver.MAX_FACTORIAL_KEY:
-            return max_factorial
-        if key == str(max_factorial):
-            return max_factorial_result
         return values.get(key, None)
 
     MockCache.return_value.get_value.side_effect = mock_get_value
     MockCache.return_value.get_value_or_fail.side_effect = mock_get_value
+    MockCache.return_value.get_set_value.return_value = sorted(map(lambda item: int(item), values.keys()))
 
     return MockCache()

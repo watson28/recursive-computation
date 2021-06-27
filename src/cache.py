@@ -1,6 +1,6 @@
 import os
 from abc import ABC, abstractclassmethod
-from typing import Union
+from typing import Union, List
 import redis
 
 
@@ -24,6 +24,14 @@ class Cache(ABC):
     def set_value(self, key: str, value: int) -> None:
         pass
 
+    @abstractclassmethod
+    def add_to_set_value(self, key: str, value: int) -> None:
+        pass
+
+    @abstractclassmethod
+    def get_set_value(self, key: str, start: int, end: int) -> List[int]:
+        pass
+
 
 class RedisCache(Cache):
     _cache: redis.Redis
@@ -41,3 +49,13 @@ class RedisCache(Cache):
 
     def set_value(self, key: str, value: int) -> None:
         self._cache.set(key, value)
+
+    def add_to_set_value(self, key: str, value: int) -> None:
+        self._cache.zadd(key, {str(value): value})
+
+    def get_set_value(self, key: str, start: int, end: int) -> List[int]:
+        return [
+            int(item.decode())
+            for item
+            in self._cache.zrangebyscore(key, min=start, max=end, withscores=False)
+        ]

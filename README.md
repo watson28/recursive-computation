@@ -70,7 +70,7 @@ It solves it using the following definition
 ```
 Ackermann(m, n) = | n + 1, when m = 0
                   | n + 2, when m = 1
-				  | (2 -> n + 3 -> m -2) -3, when m >= 2
+                  | (2 -> n + 3 -> m -2) -3, when m >= 2
 ```
 
 where `->` represents (Conway chained arrow notation)[https://en.wikipedia.org/wiki/Conway_chained_arrow_notation]
@@ -92,7 +92,7 @@ Factorial(n) = | factorial_cache[n], when n <= max_computed_n
                | n*(n-1)(n-2)*...*factorial_cache[n_floor]
 ```
 
-which will perform `(n - max_copmuted_n)` multiplications in the second case.
+which will perform `(n - max_computed_n)` multiplications in the second case.
 
 
 ## Monitoring

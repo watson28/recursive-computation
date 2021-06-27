@@ -92,7 +92,10 @@ class AckermannSolver:
         return result
 
     def _evaluate_conway_chained_arrow(self, p: int, q: int = 1, r: int = 1) -> int:
-        """ evalues a 3-length Conway chained arrow number p -> q -> r """
+        """
+        evalues a 3-length Conway chained arrow number p -> q -> r
+
+        Explicit recursive version:
         if r == 0:
             return p * q
         if q == 1 or r == 1:
@@ -104,6 +107,26 @@ class AckermannSolver:
             self._evaluate_conway_chained_arrow(p, q - 1, r),
             r - 1
         )
+        """
+        q_stack = [q]
+        r_stack = [r]
+
+        while (len(r_stack) > 0):
+            q_item = q_stack.pop()
+            r_item = r_stack.pop()
+
+            if r_item == 0:
+                q_stack.append(p * q_item)
+            elif q_item == 1 or r_item == 1:
+                q_stack.append(p**q_item)
+            elif p == 2 and q_item == 2:
+                q_stack.append(4)
+            else:
+                r_stack.append(r_item - 1)
+                r_stack.append(r_item)
+                q_stack.append(q_item - 1)
+
+        return q_stack.pop()
 
 
 class FactorialSolver:

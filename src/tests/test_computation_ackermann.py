@@ -26,6 +26,7 @@ ackermann_test_cases = [
     {'m': 3, 'n': 4, 'result': 125},
     {'m': 4, 'n': 0, 'result': 13},
     {'m': 4, 'n': 1, 'result': 65533},
+    {'m': 5, 'n': 0, 'result': 65533},
 ]
 
 

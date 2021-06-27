@@ -1,5 +1,5 @@
 from src.monitoring import Monitoring
-from fastapi import FastAPI, Path, Request
+from fastapi import FastAPI, Path, Request, Response
 from .computation import FibonacciSolver, AckermannSolver, FactorialSolver
 from .cache import RedisCache
 
@@ -38,8 +38,11 @@ def app_shutdown():
 
 @app.middleware('http')
 async def monitor_time_execution(request: Request, call_next):
-    with app_business.monitoring.monitor_execution(request.url.path):
-        return await call_next(request)
+    with app_business.monitoring.monitor_execution(request.url.path) as executionMonitor:
+        result: Response = await call_next(request)
+        if result.status_code != 200:
+            executionMonitor.abort()
+        return result
 
 
 @app.get('/fibonacci/{n}')
